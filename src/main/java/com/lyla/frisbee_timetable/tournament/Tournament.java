@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -33,8 +35,9 @@ public class Tournament {
   @Column(nullable = false)
   private String timezone;
 
+  @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private String status;
+  private TournamentStatus status;
 
   @Column(name = "created_at", nullable = false)
   private OffsetDateTime createdAt;
@@ -61,8 +64,8 @@ public class Tournament {
   public String getTimezone() { return timezone; }
   public void setTimezone(String timezone) { this.timezone = timezone; }
 
-  public String getStatus() { return status; }
-  public void setStatus(String status) { this.status = status; }
+  public TournamentStatus getStatus() { return status; }
+  public void setStatus(TournamentStatus status) { this.status = status; }
 
   public OffsetDateTime getCreatedAt() { return createdAt; }
   public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
