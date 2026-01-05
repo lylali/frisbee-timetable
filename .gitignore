@@ -1,0 +1,13 @@
+# Java / Gradle
+.gradle/
+build/
+out/
+*.iml
+.idea/
+
+# Logs
+*.log
+
+# Env
+.env
+application-local.yml

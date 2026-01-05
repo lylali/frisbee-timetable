@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5434/frisbee
+    username: frisbee
+    password: frisbee
+
+  flyway:
+    enabled: true
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
