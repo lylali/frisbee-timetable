@@ -2,6 +2,7 @@ package com.lyla.frisbee_timetable.division;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lyla.frisbee_timetable.tournament.Tournament;
 
 import jakarta.persistence.Column;
@@ -20,6 +21,7 @@ public class Division {
   @GeneratedValue
   private UUID id;
 
+  @JsonIgnore
   @ManyToOne(optional = false)
   @JoinColumn(name = "tournament_id", nullable = false)
   private Tournament tournament;
