@@ -3,23 +3,51 @@ package com.lyla.frisbee_timetable.team;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.lyla.frisbee_timetable.division.Division;
+import com.lyla.frisbee_timetable.division.DivisionRepository;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api")
 public class TeamController {
 
   private final TeamRepository repo;
+  private final DivisionRepository divisionRepo;
 
-  public TeamController(TeamRepository repo) {
+  public TeamController(TeamRepository repo, DivisionRepository divisionRepo) {
     this.repo = repo;
+    this.divisionRepo = divisionRepo;
   }
 
   @GetMapping("/divisions/{divisionId}/teams")
   public List<Team> listByDivision(@PathVariable UUID divisionId) {
     return repo.findByDivisionIdOrderBySeedAscNameAsc(divisionId);
+  }
+
+  @PostMapping("/divisions/{divisionId}/teams")
+  @ResponseStatus(HttpStatus.CREATED)
+  public Team create(
+      @PathVariable UUID divisionId,
+      @Valid @RequestBody CreateTeamRequest req
+  ) {
+    Division d = divisionRepo.findById(divisionId)
+        .orElseThrow(() -> new IllegalArgumentException("Division not found: " + divisionId));
+
+    Team t = new Team();
+    t.setDivision(d);
+    t.setName(req.getName());
+    t.setSeed(req.getSeed());
+    t.setClub(req.getClub());
+    return repo.save(t);
   }
 }
