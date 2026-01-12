@@ -3,6 +3,7 @@ package com.lyla.frisbee_timetable.division;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lyla.frisbee_timetable.tournament.Tournament;
 
 import jakarta.persistence.Column;
@@ -12,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+
 
 @Entity
 @Table(name = "division")
@@ -24,7 +26,9 @@ public class Division {
   @JsonIgnore
   @ManyToOne(optional = false)
   @JoinColumn(name = "tournament_id", nullable = false)
+  @JsonIgnoreProperties({"divisions", "timeslots", "fields"})
   private Tournament tournament;
+
 
   @Column(nullable = false)
   private String name;

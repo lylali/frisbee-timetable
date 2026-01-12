@@ -35,12 +35,6 @@ public class Game {
   @JoinColumn(name = "phase_id", nullable = false)
   private Phase phase;
 
-  public Phase getPhase() { return phase; }
-  public void setPhase(Phase phase) { this.phase = phase; }
-
-  /**
-   * pool_id exists and is nullable. Map as UUID for now.
-   */
   @Column(name = "pool_id")
   private UUID poolId;
 
@@ -54,9 +48,6 @@ public class Game {
   @JoinColumn(name = "timeslot_id")
   private Timeslot timeslot;
 
-  /**
-   * map it to existing Field entity but join via pitch_id.
-   */
   @ManyToOne
   @JoinColumn(name = "pitch_id")
   private Field pitch;
@@ -75,44 +66,132 @@ public class Game {
   @Column(name = "team2_source")
   private String team2Source;
 
+  @Column(name = "team1_score")
+  private Integer team1Score;
+
+  @Column(name = "team2_score")
+  private Integer team2Score;
+
   @Column(name = "status", nullable = false)
   private String status;
 
-  // --- getters/setters ---
+  public UUID getId() {
+    return id;
+  }
 
-  public UUID getId() { return id; }
-  public void setId(UUID id) { this.id = id; }
+  public void setId(UUID id) {
+    this.id = id;
+  }
 
-  public Division getDivision() { return division; }
-  public void setDivision(Division division) { this.division = division; }
+  public Division getDivision() {
+    return division;
+  }
 
-  public UUID getPoolId() { return poolId; }
-  public void setPoolId(UUID poolId) { this.poolId = poolId; }
+  public void setDivision(Division division) {
+    this.division = division;
+  }
 
-  public String getRoundLabel() { return roundLabel; }
-  public void setRoundLabel(String roundLabel) { this.roundLabel = roundLabel; }
+  public Phase getPhase() {
+    return phase;
+  }
 
-  public Integer getGameNumber() { return gameNumber; }
-  public void setGameNumber(Integer gameNumber) { this.gameNumber = gameNumber; }
+  public void setPhase(Phase phase) {
+    this.phase = phase;
+  }
 
-  public Timeslot getTimeslot() { return timeslot; }
-  public void setTimeslot(Timeslot timeslot) { this.timeslot = timeslot; }
+  public UUID getPoolId() {
+    return poolId;
+  }
 
-  public Field getPitch() { return pitch; }
-  public void setPitch(Field pitch) { this.pitch = pitch; }
+  public void setPoolId(UUID poolId) {
+    this.poolId = poolId;
+  }
 
-  public Team getTeam1() { return team1; }
-  public void setTeam1(Team team1) { this.team1 = team1; }
+  public String getRoundLabel() {
+    return roundLabel;
+  }
 
-  public Team getTeam2() { return team2; }
-  public void setTeam2(Team team2) { this.team2 = team2; }
+  public void setRoundLabel(String roundLabel) {
+    this.roundLabel = roundLabel;
+  }
 
-  public String getTeam1Source() { return team1Source; }
-  public void setTeam1Source(String team1Source) { this.team1Source = team1Source; }
+  public Integer getGameNumber() {
+    return gameNumber;
+  }
 
-  public String getTeam2Source() { return team2Source; }
-  public void setTeam2Source(String team2Source) { this.team2Source = team2Source; }
+  public void setGameNumber(Integer gameNumber) {
+    this.gameNumber = gameNumber;
+  }
 
-  public String getStatus() { return status; }
-  public void setStatus(String status) { this.status = status; }
+  public Timeslot getTimeslot() {
+    return timeslot;
+  }
+
+  public void setTimeslot(Timeslot timeslot) {
+    this.timeslot = timeslot;
+  }
+
+  public Field getPitch() {
+    return pitch;
+  }
+
+  public void setPitch(Field pitch) {
+    this.pitch = pitch;
+  }
+
+  public Team getTeam1() {
+    return team1;
+  }
+
+  public void setTeam1(Team team1) {
+    this.team1 = team1;
+  }
+
+  public Team getTeam2() {
+    return team2;
+  }
+
+  public void setTeam2(Team team2) {
+    this.team2 = team2;
+  }
+
+  public String getTeam1Source() {
+    return team1Source;
+  }
+
+  public void setTeam1Source(String team1Source) {
+    this.team1Source = team1Source;
+  }
+
+  public String getTeam2Source() {
+    return team2Source;
+  }
+
+  public void setTeam2Source(String team2Source) {
+    this.team2Source = team2Source;
+  }
+
+  public Integer getTeam1Score() {
+    return team1Score;
+  }
+
+  public void setTeam1Score(Integer team1Score) {
+    this.team1Score = team1Score;
+  }
+
+  public Integer getTeam2Score() {
+    return team2Score;
+  }
+
+  public void setTeam2Score(Integer team2Score) {
+    this.team2Score = team2Score;
+  }
+
+  public String getStatus() {
+    return status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
+  }
 }
