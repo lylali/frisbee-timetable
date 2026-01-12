@@ -1,0 +1,6 @@
+ALTER TABLE phase
+  ALTER COLUMN type SET DEFAULT 'POOL_PLAY';
+
+UPDATE phase
+SET type = 'POOL_PLAY'
+WHERE type IS NULL;

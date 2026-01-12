@@ -1,13 +1,16 @@
 package com.lyla.frisbee_timetable.phase;
 
-/** Minimal payload for creating a phase. */
 public class CreatePhaseRequest {
+  private String type; // optional
+  public String getType() { return type; }
+  public void setType(String type) { this.type = type; }
+
   private String name;
-  private int orderIndex;
+  private Integer orderIndex;
 
   public String getName() { return name; }
   public void setName(String name) { this.name = name; }
 
-  public int getOrderIndex() { return orderIndex; }
-  public void setOrderIndex(int orderIndex) { this.orderIndex = orderIndex; }
+  public Integer getOrderIndex() { return orderIndex; }
+  public void setOrderIndex(Integer orderIndex) { this.orderIndex = orderIndex; }
 }

@@ -1,0 +1,2 @@
+ALTER TABLE phase
+  ALTER COLUMN division_id DROP NOT NULL;

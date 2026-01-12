@@ -6,6 +6,7 @@ import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lyla.frisbee_timetable.division.Division;
+import com.lyla.frisbee_timetable.tournament.Tournament;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,10 +17,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
-/**
- * Phase represents a scheduling stage within a division (e.g., Pool Play, Bracket).
- * Games belong to a Phase via game.phase_id.
- */
 @Entity
 @Table(name = "phase")
 public class Phase {
@@ -29,10 +26,15 @@ public class Phase {
   private UUID id;
 
   @JsonIgnore
-  @ManyToOne(optional = false)
-  @JoinColumn(name = "division_id", nullable = false)
+  @ManyToOne(optional = true)
+  @JoinColumn(name = "division_id", nullable = true)
   @JsonIgnoreProperties({"tournament", "teams", "phases"})
   private Division division;
+
+  @JsonIgnore
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "tournament_id", nullable = false)
+  private Tournament tournament;
 
   @Column(nullable = false)
   private String name;
@@ -45,6 +47,12 @@ public class Phase {
 
   @Column(name = "updated_at", nullable = false)
   private Instant updatedAt = Instant.now();
+
+  @Column(name = "type", nullable = false)
+  private String type = "POOL_PLAY"; 
+  
+  public String getType() { return type; }
+  public void setType(String type) { this.type = type; }
 
   @PreUpdate
   void touch() {
@@ -68,4 +76,7 @@ public class Phase {
 
   public Instant getUpdatedAt() { return updatedAt; }
   public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
+
+  public Tournament getTournament() { return tournament; }
+  public void setTournament(Tournament tournament) { this.tournament = tournament; }
 }

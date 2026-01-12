@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,7 +54,18 @@ public class GameController {
   @GetMapping("/divisions/{divisionId}/games")
   public List<Game> list(@PathVariable UUID divisionId) {
     return repo.findByDivisionIdOrderByTimeslotDayDateAscTimeslotStartTimeAscPitchNameAsc(divisionId);
-}
+  }
+
+  @PatchMapping("/api/games/{gameId}")
+  public Game updateGame(@PathVariable UUID gameId, @RequestBody UpdateGameRequest req) {
+    Game g = repo.findById(gameId)
+        .orElseThrow(() -> new IllegalArgumentException("Game not found: " + gameId));
+
+    if (req.getTeam1Score() != null) g.setTeam1Score(req.getTeam1Score());
+    if (req.getTeam2Score() != null) g.setTeam2Score(req.getTeam2Score());
+    if (req.getStatus() != null && !req.getStatus().isBlank()) g.setStatus(req.getStatus().trim());
+    return repo.save(g);
+  }
 
   @PostMapping("/divisions/{divisionId}/games")
   @ResponseStatus(HttpStatus.CREATED)

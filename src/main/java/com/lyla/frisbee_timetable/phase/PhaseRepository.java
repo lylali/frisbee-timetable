@@ -6,5 +6,8 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PhaseRepository extends JpaRepository<Phase, UUID> {
+
+  List<Phase> findByTournamentIdOrderByOrderIndexAsc(UUID tournamentId);
+
   List<Phase> findByDivisionIdOrderByOrderIndexAsc(UUID divisionId);
 }
