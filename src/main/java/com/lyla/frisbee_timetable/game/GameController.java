@@ -70,6 +70,9 @@ public class GameController {
     Phase phase = phaseRepo.findById(req.getPhaseId())
         .orElseThrow(() -> new IllegalArgumentException("Phase not found: " + req.getPhaseId()));
 
+    if (!phase.getDivision().getId().equals(division.getId())) {
+    throw new IllegalArgumentException("Phase does not belong to this division");
+  }
 
     if (req.getTimeslotId() != null) {
       timeslot = timeslotRepo.findById(req.getTimeslotId())
