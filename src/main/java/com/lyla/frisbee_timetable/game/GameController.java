@@ -16,6 +16,8 @@ import com.lyla.frisbee_timetable.division.Division;
 import com.lyla.frisbee_timetable.division.DivisionRepository;
 import com.lyla.frisbee_timetable.field.Field;
 import com.lyla.frisbee_timetable.field.FieldRepository;
+import com.lyla.frisbee_timetable.phase.Phase;
+import com.lyla.frisbee_timetable.phase.PhaseRepository;
 import com.lyla.frisbee_timetable.team.Team;
 import com.lyla.frisbee_timetable.team.TeamRepository;
 import com.lyla.frisbee_timetable.timeslot.Timeslot;
@@ -30,19 +32,22 @@ public class GameController {
   private final TimeslotRepository timeslotRepo;
   private final FieldRepository fieldRepo;
   private final TeamRepository teamRepo;
+  private final PhaseRepository phaseRepo;
 
   public GameController(
       GameRepository repo,
       DivisionRepository divisionRepo,
       TimeslotRepository timeslotRepo,
       FieldRepository fieldRepo,
-      TeamRepository teamRepo
+      TeamRepository teamRepo,
+      PhaseRepository phaseRepo
   ) {
     this.repo = repo;
     this.divisionRepo = divisionRepo;
     this.timeslotRepo = timeslotRepo;
     this.fieldRepo = fieldRepo;
     this.teamRepo = teamRepo;
+    this.phaseRepo = phaseRepo;
   }
 
   @GetMapping("/divisions/{divisionId}/games")
@@ -57,6 +62,15 @@ public class GameController {
         .orElseThrow(() -> new IllegalArgumentException("Division not found: " + divisionId));
 
     Timeslot timeslot = null;
+
+    if (req.getPhaseId() == null) {
+    throw new IllegalArgumentException("phaseId is required");
+    }
+
+    Phase phase = phaseRepo.findById(req.getPhaseId())
+        .orElseThrow(() -> new IllegalArgumentException("Phase not found: " + req.getPhaseId()));
+
+
     if (req.getTimeslotId() != null) {
       timeslot = timeslotRepo.findById(req.getTimeslotId())
           .orElseThrow(() -> new IllegalArgumentException("Timeslot not found: " + req.getTimeslotId()));
@@ -82,7 +96,6 @@ public class GameController {
 
     Game g = new Game();
     g.setDivision(division);
-    g.setPhaseId(division.getId()); // temporary placeholder until Phase entity exists
     g.setTimeslot(timeslot);
     g.setPitch(pitch);
     g.setTeam1(team1);
@@ -90,7 +103,8 @@ public class GameController {
     g.setGameNumber(req.getGameNumber());
     g.setRoundLabel(req.getRoundLabel());
     g.setStatus("SCHEDULED");
-
+    g.setDivision(division);
+    g.setPhase(phase);
     return repo.save(g);
   }
 }

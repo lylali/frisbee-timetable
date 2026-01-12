@@ -9,6 +9,10 @@ public class CreateGameRequest {
   private UUID team2Id;
   private Integer gameNumber;
   private String roundLabel;
+  private UUID phaseId;
+
+  public UUID getPhaseId() { return phaseId; }
+  public void setPhaseId(UUID phaseId) { this.phaseId = phaseId; }
 
   public UUID getTimeslotId() { return timeslotId; }
   public void setTimeslotId(UUID timeslotId) { this.timeslotId = timeslotId; }

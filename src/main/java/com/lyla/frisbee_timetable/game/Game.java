@@ -1,12 +1,21 @@
 package com.lyla.frisbee_timetable.game;
 
+import java.util.UUID;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lyla.frisbee_timetable.division.Division;
 import com.lyla.frisbee_timetable.field.Field;
+import com.lyla.frisbee_timetable.phase.Phase;
 import com.lyla.frisbee_timetable.team.Team;
 import com.lyla.frisbee_timetable.timeslot.Timeslot;
-import jakarta.persistence.*;
-import java.util.UUID;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "game")
@@ -21,12 +30,13 @@ public class Game {
   @JoinColumn(name = "division_id", nullable = false)
   private Division division;
 
-  /**
-   * Your DB has phase_id (NOT NULL) but you don't have a Phase entity yet.
-   * Map it as a UUID for now to satisfy schema validation.
-   */
-  @Column(name = "phase_id", nullable = false)
-  private UUID phaseId;
+  @JsonIgnore
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "phase_id", nullable = false)
+  private Phase phase;
+
+  public Phase getPhase() { return phase; }
+  public void setPhase(Phase phase) { this.phase = phase; }
 
   /**
    * pool_id exists and is nullable. Map as UUID for now.
@@ -45,8 +55,7 @@ public class Game {
   private Timeslot timeslot;
 
   /**
-   * Your DB column is pitch_id (NOT field_id).
-   * We map it to your existing Field entity but join via pitch_id.
+   * map it to existing Field entity but join via pitch_id.
    */
   @ManyToOne
   @JoinColumn(name = "pitch_id")
@@ -76,9 +85,6 @@ public class Game {
 
   public Division getDivision() { return division; }
   public void setDivision(Division division) { this.division = division; }
-
-  public UUID getPhaseId() { return phaseId; }
-  public void setPhaseId(UUID phaseId) { this.phaseId = phaseId; }
 
   public UUID getPoolId() { return poolId; }
   public void setPoolId(UUID poolId) { this.poolId = poolId; }
