@@ -1,0 +1,3 @@
+ALTER TABLE game
+  ADD COLUMN team1_score INTEGER,
+  ADD COLUMN team2_score INTEGER;
