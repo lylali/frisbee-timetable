@@ -52,8 +52,8 @@ public class GameController {
 
   @GetMapping("/divisions/{divisionId}/games")
   public List<Game> list(@PathVariable UUID divisionId) {
-    return repo.findByDivisionIdOrderByGameNumberAsc(divisionId);
-  }
+    return repo.findByDivisionIdOrderByTimeslotDayDateAscTimeslotStartTimeAscPitchNameAsc(divisionId);
+}
 
   @PostMapping("/divisions/{divisionId}/games")
   @ResponseStatus(HttpStatus.CREATED)

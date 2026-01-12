@@ -29,6 +29,7 @@ public class TournamentController {
 
   @PostMapping("/tournaments")
   @ResponseStatus(HttpStatus.CREATED)
+  
   public Tournament create(@Valid @RequestBody CreateTournamentRequest req) {
     Tournament t = new Tournament();
     t.setName(req.getName());

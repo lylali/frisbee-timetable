@@ -10,4 +10,6 @@ public interface GameRepository extends JpaRepository<Game, UUID> {
   List<Game> findByDivisionIdOrderByGameNumberAsc(UUID divisionId);
 
   List<Game> findByDivisionIdAndTimeslotIdOrderByGameNumberAsc(UUID divisionId, UUID timeslotId);
+
+  List<Game> findByDivisionIdOrderByTimeslotDayDateAscTimeslotStartTimeAscPitchNameAsc(UUID divisionId);
 }
