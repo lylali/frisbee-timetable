@@ -10,6 +10,8 @@ import com.lyla.frisbee_timetable.tournament.Tournament;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -48,11 +50,12 @@ public class Phase {
   @Column(name = "updated_at", nullable = false)
   private Instant updatedAt = Instant.now();
 
+  @Enumerated(EnumType.STRING)
   @Column(name = "type", nullable = false)
-  private String type = "POOL_PLAY"; 
-  
-  public String getType() { return type; }
-  public void setType(String type) { this.type = type; }
+  private PhaseType type = PhaseType.POOL_PLAY;
+
+  public PhaseType getType() { return type; }
+  public void setType(PhaseType type) { this.type = type; }
 
   @PreUpdate
   void touch() {
