@@ -56,7 +56,14 @@ public class GameController {
     return repo.findByDivisionIdOrderByTimeslotDayDateAscTimeslotStartTimeAscPitchNameAsc(divisionId);
   }
 
-  @PatchMapping("/api/games/{gameId}")
+  @GetMapping("/phases/{phaseId}/games")
+  public List<Game> listByPhase(@PathVariable UUID phaseId) {
+    phaseRepo.findById(phaseId)
+        .orElseThrow(() -> new IllegalArgumentException("Phase not found: " + phaseId));
+    return repo.findByPhaseIdOrderByGameNumberAsc(phaseId);
+  }
+
+  @PatchMapping("/games/{gameId}")
   public Game updateGame(@PathVariable UUID gameId, @RequestBody UpdateGameRequest req) {
     Game g = repo.findById(gameId)
         .orElseThrow(() -> new IllegalArgumentException("Game not found: " + gameId));
@@ -64,7 +71,37 @@ public class GameController {
     if (req.getTeam1Score() != null) g.setTeam1Score(req.getTeam1Score());
     if (req.getTeam2Score() != null) g.setTeam2Score(req.getTeam2Score());
     if (req.getStatus() != null && !req.getStatus().isBlank()) g.setStatus(req.getStatus().trim());
-    return repo.save(g);
+    Game saved = repo.save(g);
+
+    // When a bracket game is finalised, advance the winner into the next round.
+    if ("FINAL".equals(saved.getStatus())
+        && saved.getTeam1Score() != null
+        && saved.getTeam2Score() != null
+        && saved.getPhase() != null
+        && saved.getGameNumber() != null) {
+
+      if (saved.getTeam1Score().equals(saved.getTeam2Score())) {
+        // Draws are invalid in elimination — skip advancement
+        return saved;
+      }
+
+      Team winner = saved.getTeam1Score() > saved.getTeam2Score()
+          ? saved.getTeam1()
+          : saved.getTeam2();
+      String sourceKey = "W" + saved.getGameNumber();
+      UUID phaseId = saved.getPhase().getId();
+
+      for (Game next : repo.findByPhaseIdAndTeam1Source(phaseId, sourceKey)) {
+        next.setTeam1(winner);
+        repo.save(next);
+      }
+      for (Game next : repo.findByPhaseIdAndTeam2Source(phaseId, sourceKey)) {
+        next.setTeam2(winner);
+        repo.save(next);
+      }
+    }
+
+    return saved;
   }
 
   @PostMapping("/divisions/{divisionId}/games")
@@ -82,9 +119,10 @@ public class GameController {
     Phase phase = phaseRepo.findById(req.getPhaseId())
         .orElseThrow(() -> new IllegalArgumentException("Phase not found: " + req.getPhaseId()));
 
-    if (!phase.getDivision().getId().equals(division.getId())) {
-    throw new IllegalArgumentException("Phase does not belong to this division");
-  }
+    Division phaseDiv = phase.getDivision();
+    if (phaseDiv == null || !phaseDiv.getId().equals(division.getId())) {
+      throw new IllegalArgumentException("Phase does not belong to this division");
+    }
 
     if (req.getTimeslotId() != null) {
       timeslot = timeslotRepo.findById(req.getTimeslotId())
