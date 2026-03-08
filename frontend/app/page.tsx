@@ -94,20 +94,11 @@ export default async function SchedulePage() {
   const days = [...new Set(slots.map(([k]) => k.split("|")[0]))];
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <header className="mb-6 flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">{tournament.name}</h1>
-          <p className="text-sm text-gray-500">
-            {tournament.startDate} – {tournament.endDate} · {tournament.timezone}
-          </p>
-        </div>
-        <Link
-          href="/admin"
-          className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-600 shadow-sm hover:bg-gray-50"
-        >
-          Score entry
-        </Link>
+    <div className="min-h-screen p-6">
+      <header className="mb-6">
+        <p className="text-sm text-gray-500">
+          {tournament.startDate} – {tournament.endDate} · {tournament.timezone}
+        </p>
       </header>
 
       <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">

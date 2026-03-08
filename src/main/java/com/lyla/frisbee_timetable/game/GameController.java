@@ -71,6 +71,16 @@ public class GameController {
     if (req.getTeam1Score() != null) g.setTeam1Score(req.getTeam1Score());
     if (req.getTeam2Score() != null) g.setTeam2Score(req.getTeam2Score());
     if (req.getStatus() != null && !req.getStatus().isBlank()) g.setStatus(req.getStatus().trim());
+    if (req.getTimeslotId() != null) {
+      Timeslot ts = timeslotRepo.findById(req.getTimeslotId())
+          .orElseThrow(() -> new IllegalArgumentException("Timeslot not found: " + req.getTimeslotId()));
+      g.setTimeslot(ts);
+    }
+    if (req.getFieldId() != null) {
+      Field field = fieldRepo.findById(req.getFieldId())
+          .orElseThrow(() -> new IllegalArgumentException("Field not found: " + req.getFieldId()));
+      g.setPitch(field);
+    }
     Game saved = repo.save(g);
 
     // When a bracket game is finalised, advance the winner into the next round.

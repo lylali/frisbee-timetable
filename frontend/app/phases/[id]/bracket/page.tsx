@@ -89,7 +89,7 @@ export default async function BracketPage({ params }: { params: Promise<{ id: st
   const roundNames = rounds.map((r) => r[0]?.roundLabel ?? "Round");
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen p-6">
       <header className="mb-6">
         <Link href="/" className="text-sm text-blue-600 hover:underline">← Schedule</Link>
         <h1 className="mt-1 text-2xl font-bold text-gray-900">{phase.name}</h1>

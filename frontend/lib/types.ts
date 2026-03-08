@@ -17,6 +17,11 @@ export interface StandingRow {
   pd: number;
 }
 
+export interface Field {
+  id: string;
+  name: string;
+}
+
 export interface Tournament {
   id: string;
   name: string;

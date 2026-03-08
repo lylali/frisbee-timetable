@@ -1,4 +1,4 @@
-import { getDivisions, getGames } from "@/lib/api";
+import { getDivisions, getGames, getFields, getTimeslots } from "@/lib/api";
 import { Division, Game } from "@/lib/types";
 import ScoreEntry from "./ScoreEntry";
 
@@ -15,7 +15,11 @@ function formatTime(t: string) {
 }
 
 export default async function AdminPage() {
-  const divisions = await getDivisions(TOURNAMENT_ID);
+  const [divisions, fields, timeslots] = await Promise.all([
+    getDivisions(TOURNAMENT_ID),
+    getFields(TOURNAMENT_ID),
+    getTimeslots(TOURNAMENT_ID),
+  ]);
   const allGames = await Promise.all(divisions.map((d) => getGames(d.id)));
 
   const divisionGames: { division: Division; games: Game[] }[] = divisions.map(
@@ -23,10 +27,10 @@ export default async function AdminPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen p-6">
       <header className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Score Entry</h1>
-        <p className="text-sm text-gray-500">Click a game to enter or update scores</p>
+        <p className="text-sm text-gray-500">Click a game to enter or update scores and scheduling</p>
       </header>
 
       <div className="flex flex-col gap-8">
@@ -42,11 +46,17 @@ export default async function AdminPage() {
                   key={g.id}
                   className={`${idx < games.length - 1 ? "border-b border-gray-100" : ""}`}
                 >
-                  <ScoreEntry game={g} label={gameLabel(g)} time={
-                    g.timeslot
-                      ? `${g.timeslot.dayDate} ${formatTime(g.timeslot.startTime)}`
-                      : undefined
-                  } />
+                  <ScoreEntry
+                    game={g}
+                    label={gameLabel(g)}
+                    time={
+                      g.timeslot
+                        ? `${g.timeslot.dayDate} ${formatTime(g.timeslot.startTime)}`
+                        : undefined
+                    }
+                    fields={fields}
+                    timeslots={timeslots}
+                  />
                 </div>
               ))}
             </div>

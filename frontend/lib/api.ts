@@ -1,4 +1,4 @@
-import { Division, Game, Phase, StandingRow, Tournament } from "./types";
+import { Division, Field, Game, Phase, StandingRow, Team, Timeslot, Tournament } from "./types";
 
 const BASE = "http://localhost:8080";
 const NO_STORE = { cache: "no-store" } as const;
@@ -40,5 +40,20 @@ export async function getPhaseGames(phaseId: string): Promise<Game[]> {
 
 export async function getStandings(phaseId: string): Promise<StandingRow[]> {
   const res = await fetch(`${BASE}/api/phases/${phaseId}/standings`, NO_STORE);
+  return res.json();
+}
+
+export async function getFields(tournamentId: string): Promise<Field[]> {
+  const res = await fetch(`${BASE}/api/tournaments/${tournamentId}/fields`, NO_STORE);
+  return res.json();
+}
+
+export async function getTimeslots(tournamentId: string): Promise<Timeslot[]> {
+  const res = await fetch(`${BASE}/api/tournaments/${tournamentId}/timeslots`, NO_STORE);
+  return res.json();
+}
+
+export async function getTeams(divisionId: string): Promise<Team[]> {
+  const res = await fetch(`${BASE}/api/divisions/${divisionId}/teams`, NO_STORE);
   return res.json();
 }

@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { getDivision, getPhases, getPhaseGames, getStandings } from "@/lib/api";
+import { getDivision, getPhases, getPhaseGames, getStandings, getTeams } from "@/lib/api";
 import { Game, Phase, StandingRow } from "@/lib/types";
+import BracketGenerate from "./BracketGenerate";
 
 function formatTime(t: string) {
   return t.slice(0, 5);
@@ -103,13 +104,16 @@ function GamesTable({ games }: { games: Game[] }) {
   );
 }
 
-async function PhaseSection({ phase }: { phase: Phase }) {
-  const [games, standings] = await Promise.all([
+async function PhaseSection({ phase, divisionId }: { phase: Phase; divisionId: string }) {
+  const [games, standings, teams] = await Promise.all([
     getPhaseGames(phase.id),
     phase.type === "POOL_PLAY" || phase.type === "PLACEMENT"
       ? getStandings(phase.id)
       : Promise.resolve([] as StandingRow[]),
+    phase.type === "BRACKET" ? getTeams(divisionId) : Promise.resolve([]),
   ]);
+
+  const showBracketGenerator = phase.type === "BRACKET" && games.length === 0;
 
   return (
     <section className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
@@ -118,7 +122,7 @@ async function PhaseSection({ phase }: { phase: Phase }) {
           <h2 className="font-semibold text-gray-900">{phase.name}</h2>
           <span className="text-xs text-gray-400 uppercase tracking-wide">{phase.type.replace("_", " ")}</span>
         </div>
-        {phase.type === "BRACKET" && (
+        {phase.type === "BRACKET" && games.length > 0 && (
           <Link
             href={`/phases/${phase.id}/bracket`}
             className="text-sm font-medium text-blue-600 hover:underline"
@@ -128,19 +132,26 @@ async function PhaseSection({ phase }: { phase: Phase }) {
         )}
       </div>
 
-      <div className="p-4 grid gap-6 md:grid-cols-2">
-        <div>
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">Games</h3>
-          <GamesTable games={games} />
+      {showBracketGenerator ? (
+        <div className="p-4">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">Generate Bracket</h3>
+          <BracketGenerate phaseId={phase.id} teams={teams} />
         </div>
-
-        {standings.length > 0 && (
+      ) : (
+        <div className="p-4 grid gap-6 md:grid-cols-2">
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">Standings</h3>
-            <StandingsTable rows={standings} />
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">Games</h3>
+            <GamesTable games={games} />
           </div>
-        )}
-      </div>
+
+          {standings.length > 0 && (
+            <div>
+              <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">Standings</h3>
+              <StandingsTable rows={standings} />
+            </div>
+          )}
+        </div>
+      )}
     </section>
   );
 }
@@ -153,7 +164,7 @@ export default async function DivisionPage({ params }: { params: Promise<{ id: s
   ]);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen p-6">
       <header className="mb-6">
         <Link href="/" className="text-sm text-blue-600 hover:underline">← Schedule</Link>
         <h1 className="mt-1 text-2xl font-bold text-gray-900">{division.name}</h1>
@@ -161,7 +172,7 @@ export default async function DivisionPage({ params }: { params: Promise<{ id: s
 
       <div className="flex flex-col gap-6">
         {phases.map((phase) => (
-          <PhaseSection key={phase.id} phase={phase} />
+          <PhaseSection key={phase.id} phase={phase} divisionId={id} />
         ))}
         {phases.length === 0 && (
           <p className="text-gray-400">No phases yet.</p>
