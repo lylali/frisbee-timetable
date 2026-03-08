@@ -1,6 +1,6 @@
 import { Division, Field, Game, Phase, StandingRow, Team, Timeslot, Tournament } from "./types";
 
-const BASE = "http://localhost:8080";
+const BASE = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8080";
 const NO_STORE = { cache: "no-store" } as const;
 
 export async function getTournament(id: string): Promise<Tournament> {

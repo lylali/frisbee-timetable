@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getDivision, getPhases, getPhaseGames, getStandings, getTeams } from "@/lib/api";
 import { Game, Phase, StandingRow } from "@/lib/types";
 import BracketGenerate from "./BracketGenerate";
+import PoolPlayGenerate from "./PoolPlayGenerate";
 
 function formatTime(t: string) {
   return t.slice(0, 5);
@@ -110,10 +111,11 @@ async function PhaseSection({ phase, divisionId }: { phase: Phase; divisionId: s
     phase.type === "POOL_PLAY" || phase.type === "PLACEMENT"
       ? getStandings(phase.id)
       : Promise.resolve([] as StandingRow[]),
-    phase.type === "BRACKET" ? getTeams(divisionId) : Promise.resolve([]),
+    getTeams(divisionId),
   ]);
 
   const showBracketGenerator = phase.type === "BRACKET" && games.length === 0;
+  const showPoolPlayGenerator = (phase.type === "POOL_PLAY" || phase.type === "PLACEMENT") && games.length === 0;
 
   return (
     <section className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
@@ -136,6 +138,11 @@ async function PhaseSection({ phase, divisionId }: { phase: Phase; divisionId: s
         <div className="p-4">
           <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">Generate Bracket</h3>
           <BracketGenerate phaseId={phase.id} teams={teams} />
+        </div>
+      ) : showPoolPlayGenerator ? (
+        <div className="p-4">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">Generate Schedule</h3>
+          <PoolPlayGenerate phaseId={phase.id} teams={teams} />
         </div>
       ) : (
         <div className="p-4 grid gap-6 md:grid-cols-2">

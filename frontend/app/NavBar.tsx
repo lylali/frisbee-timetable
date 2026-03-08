@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const links = [
   { href: "/", label: "Schedule" },
   { href: "/admin", label: "Score entry" },
+  { href: "/admin/setup", label: "Setup" },
 ];
 
 export default function NavBar({ tournamentName }: { tournamentName: string }) {

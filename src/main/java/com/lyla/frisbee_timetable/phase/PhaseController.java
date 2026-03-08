@@ -305,6 +305,84 @@ public class PhaseController {
   }
 
   // ----------------------------
+  // POOL PLAY GENERATION
+  // ----------------------------
+
+  /**
+   * Generate round-robin games for a POOL_PLAY or PLACEMENT phase.
+   * Accepts team IDs in any order. Works for any number of teams ≥ 2.
+   * Uses the standard circle/rotation algorithm:
+   *   - Fix team[0], rotate team[1..n-1] each round
+   *   - For odd n, add a bye slot (no game created for bye matchup)
+   * Produces n-1 rounds (even) or n rounds (odd), each labelled "Round N".
+   */
+  @PostMapping("/phases/{phaseId}/pool-play/generate")
+  @ResponseStatus(HttpStatus.CREATED)
+  public List<Game> generatePoolPlay(@PathVariable UUID phaseId, @RequestBody BracketGenerateRequest req) {
+    Phase phase = phaseRepo.findById(phaseId)
+        .orElseThrow(() -> new NotFoundException("Phase not found: " + phaseId));
+
+    if (phase.getType() == PhaseType.BRACKET) {
+      throw new BadRequestException("Use /bracket/generate for BRACKET phases");
+    }
+    Division division = phase.getDivision();
+    if (division == null) {
+      throw new BadRequestException("Pool play generation requires a division-scoped phase");
+    }
+
+    List<UUID> teamIds = req.getTeamIds();
+    if (teamIds == null || teamIds.size() < 2) {
+      throw new BadRequestException("At least 2 team IDs required");
+    }
+
+    List<Team> teams = new ArrayList<>();
+    for (UUID id : teamIds) {
+      teams.add(teamRepo.findById(id)
+          .orElseThrow(() -> new NotFoundException("Team not found: " + id)));
+    }
+
+    int n = teams.size();
+    boolean isOdd = n % 2 != 0;
+    int nEff = isOdd ? n + 1 : n;   // effective count (even)
+    int numRounds = nEff - 1;
+
+    // positions[0..nEff-1]: index into teams list; nEff-1 is "bye" if odd
+    List<Integer> positions = new ArrayList<>();
+    for (int i = 0; i < nEff; i++) positions.add(i);
+
+    int[] gameNum = { gameRepo.findByPhaseIdOrderByGameNumberAsc(phaseId)
+        .stream().mapToInt(g -> g.getGameNumber() == null ? 0 : g.getGameNumber())
+        .max().orElse(0) + 1 };
+
+    List<Game> created = new ArrayList<>();
+
+    for (int round = 0; round < numRounds; round++) {
+      String label = "Round " + (round + 1);
+      for (int i = 0; i < nEff / 2; i++) {
+        int a = positions.get(i);
+        int b = positions.get(nEff - 1 - i);
+        // skip bye matchup
+        if (isOdd && (a == n || b == n)) continue;
+
+        Game g = new Game();
+        g.setDivision(division);
+        g.setPhase(phase);
+        g.setTeam1(teams.get(a));
+        g.setTeam2(teams.get(b));
+        g.setGameNumber(gameNum[0]++);
+        g.setRoundLabel(label);
+        g.setStatus("SCHEDULED");
+        created.add(gameRepo.save(g));
+      }
+      // Rotate positions[1..nEff-1] by moving last to index 1
+      int last = positions.remove(nEff - 1);
+      positions.add(1, last);
+    }
+
+    return created;
+  }
+
+  // ----------------------------
   // DTO + Exceptions
   // ----------------------------
 

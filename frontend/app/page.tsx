@@ -1,31 +1,9 @@
 import React from "react";
 import Link from "next/link";
-import { Division, Game, Tournament } from "@/lib/types";
+import { getTournament, getDivisions, getGames } from "@/lib/api";
+import { Game } from "@/lib/types";
 
 const TOURNAMENT_ID = "a0000000-0000-0000-0000-000000000001";
-const BASE = "http://localhost:8080";
-
-async function getTournament(): Promise<Tournament> {
-  const res = await fetch(`${BASE}/api/tournaments/${TOURNAMENT_ID}`, {
-    cache: "no-store",
-  });
-  return res.json();
-}
-
-async function getDivisions(): Promise<Division[]> {
-  const res = await fetch(
-    `${BASE}/api/tournaments/${TOURNAMENT_ID}/divisions`,
-    { cache: "no-store" }
-  );
-  return res.json();
-}
-
-async function getGames(divisionId: string): Promise<Game[]> {
-  const res = await fetch(`${BASE}/api/divisions/${divisionId}/games`, {
-    cache: "no-store",
-  });
-  return res.json();
-}
 
 function formatTime(t: string) {
   return t.slice(0, 5); // "09:00:00" → "09:00"
@@ -64,8 +42,8 @@ function groupBySlot(games: Game[]): DivisionGames {
 
 export default async function SchedulePage() {
   const [tournament, divisions] = await Promise.all([
-    getTournament(),
-    getDivisions(),
+    getTournament(TOURNAMENT_ID),
+    getDivisions(TOURNAMENT_ID),
   ]);
 
   const allGames = await Promise.all(divisions.map((d) => getGames(d.id)));
@@ -169,6 +147,9 @@ export default async function SchedulePage() {
                                       {gameLabel(g)}
                                     </div>
                                     <div className="flex items-center gap-2 text-xs text-gray-500">
+                                      {g.pitch && (
+                                        <span className="font-medium text-gray-400">{g.pitch.name}</span>
+                                      )}
                                       {g.roundLabel && (
                                         <span>{g.roundLabel}</span>
                                       )}
