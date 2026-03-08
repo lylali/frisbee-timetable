@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { Division, Game, Tournament } from "@/lib/types";
 
 const TOURNAMENT_ID = "a0000000-0000-0000-0000-000000000001";
@@ -94,11 +95,19 @@ export default async function SchedulePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <header className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">{tournament.name}</h1>
-        <p className="text-sm text-gray-500">
-          {tournament.startDate} – {tournament.endDate} · {tournament.timezone}
-        </p>
+      <header className="mb-6 flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">{tournament.name}</h1>
+          <p className="text-sm text-gray-500">
+            {tournament.startDate} – {tournament.endDate} · {tournament.timezone}
+          </p>
+        </div>
+        <Link
+          href="/admin"
+          className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-600 shadow-sm hover:bg-gray-50"
+        >
+          Score entry
+        </Link>
       </header>
 
       <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
@@ -113,7 +122,9 @@ export default async function SchedulePage() {
                   key={d.id}
                   className="px-4 py-3 text-left font-semibold text-gray-600"
                 >
-                  {d.name}
+                  <Link href={`/divisions/${d.id}`} className="hover:text-blue-600 hover:underline">
+                    {d.name}
+                  </Link>
                 </th>
               ))}
             </tr>

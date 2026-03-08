@@ -1,3 +1,22 @@
+export interface Phase {
+  id: string;
+  name: string;
+  orderIndex: number;
+  type: "POOL_PLAY" | "BRACKET" | "PLACEMENT";
+}
+
+export interface StandingRow {
+  rank: number;
+  team: Team;
+  gp: number;
+  w: number;
+  l: number;
+  d: number;
+  pf: number;
+  pa: number;
+  pd: number;
+}
+
 export interface Tournament {
   id: string;
   name: string;

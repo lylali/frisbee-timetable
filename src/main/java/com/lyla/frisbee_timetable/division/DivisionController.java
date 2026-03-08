@@ -29,6 +29,12 @@ public class DivisionController {
     this.tournamentRepo = tournamentRepo;
   }
 
+  @GetMapping("/divisions/{id}")
+  public Division get(@PathVariable UUID id) {
+    return repo.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("Division not found: " + id));
+  }
+
   @GetMapping("/tournaments/{tournamentId}/divisions")
   public List<Division> listByTournament(@PathVariable UUID tournamentId) {
     return repo.findByTournamentIdOrderByOrderIndexAsc(tournamentId);

@@ -47,6 +47,12 @@ public class PhaseController {
   // READ
   // ----------------------------
 
+  @GetMapping("/phases/{phaseId}")
+  public Phase get(@PathVariable UUID phaseId) {
+    return phaseRepo.findById(phaseId)
+        .orElseThrow(() -> new NotFoundException("Phase not found: " + phaseId));
+  }
+
   @GetMapping("/divisions/{divisionId}/phases")
   public List<Phase> listByDivision(@PathVariable UUID divisionId) {
     // If division doesn't exist, return 404 instead of silently returning empty.
