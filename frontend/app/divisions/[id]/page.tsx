@@ -3,6 +3,8 @@ import { getDivision, getPhases, getPhaseGames, getStandings, getTeams } from "@
 import { Game, Phase, StandingRow } from "@/lib/types";
 import BracketGenerate from "./BracketGenerate";
 import PoolPlayGenerate from "./PoolPlayGenerate";
+import PagePlayoffGenerate from "./PagePlayoffGenerate";
+import DoubleElimGenerate from "./DoubleElimGenerate";
 
 function formatTime(t: string) {
   return t.slice(0, 5);
@@ -116,6 +118,8 @@ async function PhaseSection({ phase, divisionId }: { phase: Phase; divisionId: s
 
   const showBracketGenerator = phase.type === "BRACKET" && games.length === 0;
   const showPoolPlayGenerator = (phase.type === "POOL_PLAY" || phase.type === "PLACEMENT") && games.length === 0;
+  const showPagePlayoffGenerator = phase.type === "PAGE_PLAYOFF" && games.length === 0;
+  const showDoubleElimGenerator = phase.type === "DOUBLE_ELIMINATION" && games.length === 0;
 
   return (
     <section className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
@@ -124,7 +128,7 @@ async function PhaseSection({ phase, divisionId }: { phase: Phase; divisionId: s
           <h2 className="font-semibold text-gray-900">{phase.name}</h2>
           <span className="text-xs text-gray-400 uppercase tracking-wide">{phase.type.replace("_", " ")}</span>
         </div>
-        {phase.type === "BRACKET" && games.length > 0 && (
+        {(phase.type === "BRACKET" || phase.type === "PAGE_PLAYOFF" || phase.type === "DOUBLE_ELIMINATION") && games.length > 0 && (
           <Link
             href={`/phases/${phase.id}/bracket`}
             className="text-sm font-medium text-blue-600 hover:underline"
@@ -143,6 +147,16 @@ async function PhaseSection({ phase, divisionId }: { phase: Phase; divisionId: s
         <div className="p-4">
           <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">Generate Schedule</h3>
           <PoolPlayGenerate phaseId={phase.id} teams={teams} />
+        </div>
+      ) : showPagePlayoffGenerator ? (
+        <div className="p-4">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">Generate Page Playoff</h3>
+          <PagePlayoffGenerate phaseId={phase.id} teams={teams} />
+        </div>
+      ) : showDoubleElimGenerator ? (
+        <div className="p-4">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">Generate Double Elimination</h3>
+          <DoubleElimGenerate phaseId={phase.id} teams={teams} />
         </div>
       ) : (
         <div className="p-4 grid gap-6 md:grid-cols-2">

@@ -2,7 +2,7 @@ export interface Phase {
   id: string;
   name: string;
   orderIndex: number;
-  type: "POOL_PLAY" | "BRACKET" | "PLACEMENT";
+  type: "POOL_PLAY" | "BRACKET" | "PLACEMENT" | "PAGE_PLAYOFF" | "DOUBLE_ELIMINATION";
 }
 
 export interface StandingRow {

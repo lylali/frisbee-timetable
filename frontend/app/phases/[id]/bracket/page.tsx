@@ -59,25 +59,14 @@ function GameCard({ game }: { game: Game }) {
 function buildRounds(games: Game[]): Game[][] {
   if (games.length === 0) return [];
 
-  // Group games by round based on roundLabel order
-  // Games are ordered by gameNumber ascending, so round 1 is the first n/2 games, etc.
-  const total = games.length; // total games = 2^n - 1 for n-team bracket
-  // Determine bracket size: total games for n teams = n-1
-  // Rounds: n/2 teams → n/4 teams → ... → 1 (final)
-  // e.g. 4 teams: 2 + 1 = 3 games, rounds [2, 1]
-  // e.g. 8 teams: 4 + 2 + 1 = 7 games, rounds [4, 2, 1]
-
-  const rounds: Game[][] = [];
-  let remaining = games;
-  let roundSize = Math.pow(2, Math.ceil(Math.log2(total + 1)) - 1);
-
-  while (remaining.length > 0) {
-    rounds.push(remaining.slice(0, roundSize));
-    remaining = remaining.slice(roundSize);
-    roundSize = Math.floor(roundSize / 2);
+  // Group games by roundLabel, preserving insertion order (games sorted by gameNumber)
+  const map = new Map<string, Game[]>();
+  for (const g of games) {
+    const key = g.roundLabel ?? "Round";
+    if (!map.has(key)) map.set(key, []);
+    map.get(key)!.push(g);
   }
-
-  return rounds;
+  return [...map.values()];
 }
 
 export default async function BracketPage({ params }: { params: Promise<{ id: string }> }) {

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -109,9 +110,30 @@ public class GameController {
         next.setTeam2(winner);
         repo.save(next);
       }
+
+      // Advance loser into any game that references L{gameNumber}
+      Team loser = winner == saved.getTeam1() ? saved.getTeam2() : saved.getTeam1();
+      String loserKey = "L" + saved.getGameNumber();
+      for (Game next : repo.findByPhaseIdAndTeam1Source(phaseId, loserKey)) {
+        next.setTeam1(loser);
+        repo.save(next);
+      }
+      for (Game next : repo.findByPhaseIdAndTeam2Source(phaseId, loserKey)) {
+        next.setTeam2(loser);
+        repo.save(next);
+      }
     }
 
     return saved;
+  }
+
+  @DeleteMapping("/phases/{phaseId}/games")
+  @ResponseStatus(org.springframework.http.HttpStatus.NO_CONTENT)
+  public void deletePhaseGames(@PathVariable UUID phaseId) {
+    phaseRepo.findById(phaseId)
+        .orElseThrow(() -> new IllegalArgumentException("Phase not found: " + phaseId));
+    List<Game> games = repo.findByPhaseIdOrderByGameNumberAsc(phaseId);
+    repo.deleteAll(games);
   }
 
   @PostMapping("/divisions/{divisionId}/games")

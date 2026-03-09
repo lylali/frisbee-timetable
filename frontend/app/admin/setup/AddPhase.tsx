@@ -50,6 +50,8 @@ export default function AddPhase({ divisionId, nextIndex }: { divisionId: string
           <option value="POOL_PLAY">POOL PLAY</option>
           <option value="BRACKET">BRACKET</option>
           <option value="PLACEMENT">PLACEMENT</option>
+          <option value="PAGE_PLAYOFF">PAGE PLAYOFF</option>
+          <option value="DOUBLE_ELIMINATION">DOUBLE ELIMINATION</option>
         </select>
       </div>
       <button
