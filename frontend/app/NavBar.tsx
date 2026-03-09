@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const links = [
   { href: "/", label: "Schedule" },
@@ -9,8 +9,14 @@ const links = [
   { href: "/admin/setup", label: "Setup" },
 ];
 
-export default function NavBar({ tournamentName }: { tournamentName: string }) {
+export default function NavBar({ tournamentName, isAdmin }: { tournamentName: string; isAdmin: boolean }) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function logout() {
+    await fetch("/api/admin/login", { method: "DELETE" });
+    router.push("/admin/login");
+  }
 
   return (
     <nav className="sticky top-0 z-10 border-b border-gray-200 bg-white shadow-sm">
@@ -34,6 +40,14 @@ export default function NavBar({ tournamentName }: { tournamentName: string }) {
             );
           })}
         </div>
+        {isAdmin && (
+          <button
+            onClick={logout}
+            className="ml-auto text-xs text-gray-400 hover:text-gray-700"
+          >
+            Log out
+          </button>
+        )}
       </div>
     </nav>
   );

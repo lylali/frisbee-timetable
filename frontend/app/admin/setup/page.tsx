@@ -4,6 +4,7 @@ import AddField from "./AddField";
 import AddTimeslot from "./AddTimeslot";
 import AddTeam from "./AddTeam";
 import AddPhase from "./AddPhase";
+import DeleteItem from "./DeleteItem";
 
 const TOURNAMENT_ID = "a0000000-0000-0000-0000-000000000001";
 
@@ -30,6 +31,7 @@ async function DivisionSetup({ division }: { division: Division }) {
                 <span className="w-5 text-center text-xs text-gray-400">{t.seed ?? "—"}</span>
                 <span className="font-medium">{t.name}</span>
                 {t.club && <span className="text-gray-400">· {t.club}</span>}
+                <DeleteItem url={`/api/teams/${t.id}`} label={t.name} />
               </li>
             ))}
             {teams.length === 0 && <li className="text-sm text-gray-400">No teams yet</li>}
@@ -48,8 +50,9 @@ async function DivisionSetup({ division }: { division: Division }) {
                 <span className="text-xs text-gray-400">{p.orderIndex}</span>
                 <span className="font-medium">{p.name}</span>
                 <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-500">
-                  {p.type.replace("_", " ")}
+                  {p.type.replace(/_/g, " ")}
                 </span>
+                <DeleteItem url={`/api/phases/${p.id}/games`} label={`${p.name} games`} />
               </li>
             ))}
             {phases.length === 0 && <li className="text-sm text-gray-400">No phases yet</li>}
@@ -86,7 +89,10 @@ export default async function SetupPage() {
             <div className="p-4">
               <ul className="mb-3 space-y-1">
                 {fields.map((f) => (
-                  <li key={f.id} className="text-sm font-medium text-gray-700">{f.name}</li>
+                  <li key={f.id} className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <span className="flex-1">{f.name}</span>
+                    <DeleteItem url={`/api/fields/${f.id}`} label={f.name} />
+                  </li>
                 ))}
                 {fields.length === 0 && <li className="text-sm text-gray-400">No fields yet</li>}
               </ul>
@@ -102,11 +108,11 @@ export default async function SetupPage() {
             <div className="p-4">
               <ul className="mb-3 space-y-1">
                 {timeslots.map((ts) => (
-                  <li key={ts.id} className="text-sm text-gray-700">
+                  <li key={ts.id} className="flex items-center gap-2 text-sm text-gray-700">
                     <span className="font-medium">{ts.dayDate}</span>
-                    {" "}
                     <span className="font-mono">{ts.startTime.slice(0, 5)}–{ts.endTime.slice(0, 5)}</span>
-                    {ts.label && <span className="text-gray-400 ml-1">({ts.label})</span>}
+                    {ts.label && <span className="text-gray-400">({ts.label})</span>}
+                    <DeleteItem url={`/api/timeslots/${ts.id}`} label={ts.startTime} />
                   </li>
                 ))}
                 {timeslots.length === 0 && <li className="text-sm text-gray-400">No timeslots yet</li>}

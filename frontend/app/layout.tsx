@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import NavBar from "./NavBar";
 import { getTournament } from "@/lib/api";
+import { cookies } from "next/headers";
 
 const TOURNAMENT_ID = "a0000000-0000-0000-0000-000000000001";
 
@@ -26,12 +27,16 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const tournament = await getTournament(TOURNAMENT_ID);
+  const [tournament, cookieStore] = await Promise.all([
+    getTournament(TOURNAMENT_ID),
+    cookies(),
+  ]);
+  const isAdmin = cookieStore.get("admin_auth")?.value === "1";
 
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50`}>
-        <NavBar tournamentName={tournament.name} />
+        <NavBar tournamentName={tournament.name} isAdmin={isAdmin} />
         <main className="mx-auto max-w-7xl">
           {children}
         </main>
