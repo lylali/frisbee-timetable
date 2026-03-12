@@ -53,6 +53,29 @@ export interface Timeslot {
   label: string | null;
 }
 
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+}
+
+export interface RosterEntry {
+  id: string;
+  playerName: string;
+  playerEmail: string | null;
+  createdAt: string;
+}
+
+export interface UserTeamEntry {
+  teamId: string;
+  teamName: string;
+  club: string | null;
+  divisionId: string;
+  divisionName: string;
+  tournamentId: string;
+  tournamentName: string;
+}
+
 export interface Game {
   id: string;
   gameNumber: number | null;

@@ -9,6 +9,10 @@ public class CreateTeamRequest {
 
   private Integer seed;
   private String club;
+  private java.util.UUID leaderId;
+
+  public java.util.UUID getLeaderId() { return leaderId; }
+  public void setLeaderId(java.util.UUID leaderId) { this.leaderId = leaderId; }
 
   public String getName() { return name; }
   public void setName(String name) { this.name = name; }

@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TeamRepository extends JpaRepository<Team, UUID> {
   List<Team> findByDivisionIdOrderBySeedAscNameAsc(UUID divisionId);
+  List<Team> findByLeaderId(UUID leaderId);
 }

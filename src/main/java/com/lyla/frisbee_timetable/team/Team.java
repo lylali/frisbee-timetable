@@ -35,6 +35,9 @@ public class Team {
 
   private String club;
 
+  @Column(name = "leader_id")
+  private UUID leaderId;
+
   @Column(name = "bonus_points", nullable = false)
   private int bonusPoints = 0;
 
@@ -58,6 +61,9 @@ public class Team {
 
   public int getBonusPoints() { return bonusPoints; }
   public void setBonusPoints(int bonusPoints) { this.bonusPoints = bonusPoints; }
+
+  public UUID getLeaderId() { return leaderId; }
+  public void setLeaderId(UUID leaderId) { this.leaderId = leaderId; }
 
   public int getPenaltyPoints() { return penaltyPoints; }
   public void setPenaltyPoints(int penaltyPoints) { this.penaltyPoints = penaltyPoints; }

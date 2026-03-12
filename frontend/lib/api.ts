@@ -1,7 +1,12 @@
-import { Division, Field, Game, Phase, StandingRow, Team, Timeslot, Tournament } from "./types";
+import { Division, Field, Game, Phase, RosterEntry, StandingRow, Team, Timeslot, Tournament, User, UserTeamEntry } from "./types";
 
 const BASE = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8080";
 const NO_STORE = { cache: "no-store" } as const;
+
+export async function getTournaments(): Promise<Tournament[]> {
+  const res = await fetch(`${BASE}/api/tournaments`, NO_STORE);
+  return res.json();
+}
 
 export async function getTournament(id: string): Promise<Tournament> {
   const res = await fetch(`${BASE}/api/tournaments/${id}`, NO_STORE);
@@ -55,5 +60,20 @@ export async function getTimeslots(tournamentId: string): Promise<Timeslot[]> {
 
 export async function getTeams(divisionId: string): Promise<Team[]> {
   const res = await fetch(`${BASE}/api/divisions/${divisionId}/teams`, NO_STORE);
+  return res.json();
+}
+
+export async function getUser(id: string): Promise<User> {
+  const res = await fetch(`${BASE}/api/auth/users/${id}`, NO_STORE);
+  return res.json();
+}
+
+export async function getUserTeams(userId: string): Promise<UserTeamEntry[]> {
+  const res = await fetch(`${BASE}/api/auth/users/${userId}/teams`, NO_STORE);
+  return res.json();
+}
+
+export async function getRoster(teamId: string): Promise<RosterEntry[]> {
+  const res = await fetch(`${BASE}/api/teams/${teamId}/roster`, NO_STORE);
   return res.json();
 }

@@ -30,6 +30,12 @@ public class TeamController {
     this.divisionRepo = divisionRepo;
   }
 
+  @GetMapping("/teams/{id}")
+  public Team get(@PathVariable UUID id) {
+    return repo.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("Team not found: " + id));
+  }
+
   @GetMapping("/divisions/{divisionId}/teams")
   public List<Team> listByDivision(@PathVariable UUID divisionId) {
     return repo.findByDivisionIdOrderBySeedAscNameAsc(divisionId);
@@ -49,6 +55,7 @@ public class TeamController {
     t.setName(req.getName());
     t.setSeed(req.getSeed());
     t.setClub(req.getClub());
+    t.setLeaderId(req.getLeaderId());
     return repo.save(t);
   }
 
